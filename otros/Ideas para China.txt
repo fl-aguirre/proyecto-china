@@ -1,0 +1,13 @@
+Idea para artículo: convergencia de votación en Asamblea General de NU con otras variables económicas -comercio, IED, etc.- y políticas -BRI, AIIB, TLC-. Las mismas variables políticas pueden ser un indicador de convergencia.
+
+En particular, antes que sólo medir el comercio, armaría un índice de "dependencia" en base a lo que alguna vez armé. Esto es el peso del comercio relativo con China en la balanza total de ese país (y posiblemente en su economía), y lo mismo para las inversiones.
+
+Índice de Intensidad Comercial (CEPAL)
+IExpoA = (ExpoAB / ImpoBTotal) / CExpoA
+IImpoA = (ImpoAB / ExpoBTotal) / CImpoA
+
+Se puede armar un índice parecido para las IED. Acá va a estar más complicado, porque hay más inversiones de China. Pero se podría cambiar por peso relativo de IED sobre PBI. Y lo mismo para financiamiento.
+
+Para el indicador político, no tomaría el AIIB, pero sí convergencia de votos en NU (acá también se podría medir distancia con EEUU), miembro de BRI, y Asociación Estratégica. TLC quizás. Yo las cruzaría por separado. Sino armar un indicador medio discrecional de peso relativo. También armaría un espectro según el tipo de AE (1 si es integral, 0,5 si es sólo estratégica, y así). Buscar métodos para medir la distancia. Lo que se me ocurre la diferencia o el cociente entre indicador con China y con EEUU (cuánto de esa convergencia corresponde a la de EEUU).
+
+Para la Diplo, se puede proyectar un mapa de estas variables sobre América Latina, contemplando también la convergencia política. Se podría también armar un índice que resuma estas variables.
