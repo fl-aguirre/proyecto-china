@@ -1,7 +1,6 @@
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
-library(readxl)
 library(openxlsx)
 
 load(file = "data/otras/UNVotes.RData")
@@ -62,11 +61,11 @@ write_csv(x = unconv_china, file = "data/unconv_china.csv")
 #Acá tuve que sacar los códigos del país porque Country y Countryname están mal cargadas para 2019.
 refcode <- select(unconv_china, ccode, Country, Countryname)
 unique(refcode$ccode)
-write.xlsx(x = refcode, file = "data/refcode.xlsx")
+write.xlsx(x = refcode, file = "data/otras/refcode.xlsx")
 
 
 #Sacar media de convergencia por país y por año y crear tabla final
-#Como no me coinciden los nombres, voy a calcularlo por código de país (única variable homogenea)
+#No me coinciden los nombres, lo calculo por código de país
 unconv_china_mean <- with(unconv_china, 
                         aggregate(conv_china, list("ccode"=ccode, "year"=year), 
                         mean))
@@ -75,10 +74,10 @@ unique(unconv_china_mean$year)
 
 write_csv(x = unconv_china_mean, file = "data/unconv_china_mean.csv")
 
-#Tras chequearlo y exportarlo, limpio los códigos y hago un merge by abv con la base_v3 para incorporarlos
+#Limpieza y merge con códigos by abv para poder agregar unconv_mean
 
 base_china_v4 <- full_join(x = base_china_v3, y = refcode, by = "abv")
-write.xlsx(x = base_china_v4, file = "data/base_china_v4.xlsx")
+write.xlsx(x = base_china_v4, file = "data/versiones/base_china_v4.xlsx")
 
 #Listo! Ahora puedo hacer el merge con UN Votes.
 
@@ -86,4 +85,4 @@ write.xlsx(x = base_china_v4, file = "data/base_china_v4.xlsx")
 base_china_v5 <- full_join(x = base_china_v4, y = unconv_china_mean, by = c("ccode", "year"))
 base_china_v5 <- select(base_china_v5, -country.y)
 colnames(base_china_v5)[18] <- "unconv_china"
-write.xlsx(base_china_v5, file = "data/base_china_v5.xlsx")
+write.xlsx(base_china_v5, file = "data/versiones/base_china_v5.xlsx")
