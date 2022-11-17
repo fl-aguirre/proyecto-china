@@ -26,21 +26,44 @@ base_v1.5 <- full_join(bgdp, btrade) #1.5 porque la 1 era la vieja base manual
 write.xlsx(base_v1.5, file = "data/versiones/base_china_v1.5.xlsx")
 
 # Base_v1.5 fue manipulada manualmente para agregar MOU BRI desde china_pe 
-# Nueva base: base_china_v2. Tendría que ver si se puede automatizar.
-base_pe <- read_excel("data/otras/china_pe.xlsx")
+# Nueva base: base_china_v2. Voy a tratar de automatizarlo a continuación.
 
+#Importo, segmento y limpio la base china_pe
+base_pe <- read_excel("data/otras/china_pe.xlsx")
+base_bri <- base_pe %>% 
+  select(country, mou_year, mou_bri)
+base_bri$mou_year[base_bri$mou_year == "na"] <- NA
+
+#Creo una nueva base con la lista de todos los países por cada año del mou_bri 
 years <- rep(c(2013:2021),216)
 countries <- sort(rep(base_pe$country, 9))
 countries_year <- data.frame(cbind("country"=countries, "mou_year"=years))
 
-base_bri <- base_pe %>% 
-  select(country, mou_year, mou_bri)
-  
-base_bri$mou_year[base_bri$mou_year == "na"] <- NA
-
+#Merge de la base de bri con la nueva lista de países por año
 base_bri2 <- full_join(base_bri, countries_year, by=c("country", "mou_year"))
 
-# Llegamos hasta ahí, lo dejemos por ahora...
+#Cambio los NA de mou_bri por un 0 
+base_bri2$mou_bri[is.na(base_bri2$mou_bri)] <- 0
+
+#La reordenamos para que el loop avance por país y por año
+#Camio los años a tipo numérico porque están en caracter (culpa de los na)
+base_bri_ordenada <- base_bri2[order(base_bri2$country, base_bri2$mou_year), ]
+
+
+#Ahora vamos con el loop
+
+x <- 0
+
+for (i in base_bri_ordenada$country){
+  x <- 0
+  print(x)
+  for (n in base_bri_ordenada$mou_bri){
+    if (n == 1) {
+      x <- 1
+    }
+    print(x)
+  }
+}
 
 
 ## Base China Politica Exterior ###############################################
