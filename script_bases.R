@@ -161,7 +161,7 @@ listaVotos <- un_conv(unvotes_total2010,unvotes_china2010)
 unconv_china <- unvotes_total2010 %>% 
   mutate(conv_china = as.numeric(listaVotos))
 
-write_csv(x = unconv_china, file = "data/unconv_china.csv")
+write_csv(x = unconv_china, file = "data/otras/unconv_china.csv")
 
 #Acá tuve que sacar los códigos del país porque Country y Countryname están mal cargadas para 2019.
 refcode <- select(unconv_china, ccode, Country, Countryname)
@@ -177,7 +177,7 @@ unconv_china_mean <- with(unconv_china,
 
 unique(unconv_china_mean$year)
 
-write_csv(x = unconv_china_mean, file = "data/unconv_china_mean.csv")
+write_csv(x = unconv_china_mean, file = "data/otras/unconv_china_mean.csv")
 
 #Limpieza y merge con códigos by abv para poder agregar unconv_mean
 base_china_v4 <- full_join(x = base_china_v3, y = refcode, by = "abv")
@@ -215,60 +215,62 @@ base_china_ied <- left_join(base_china_aiib, b_ied, by = c("country", "year"))
 ### Merge DevFin ####
 base_china_devfin <- left_join(base_china_ied, b_devfin, by = c("country", "year", "abv", "ccode"))
 
-### Creación de id y exportación ####
+### Creación de id y exportación #### 
 base_china_v6 <- base_china_devfin %>% 
   mutate (id = c(1:nrow(base_china_devfin))) %>% 
-  select(id, colnames(base_china_devfin))
+  select(id, colnames(base_china_devfin)) # Esto creo que al final no lo apliqué
 
-write.xlsx(base_china_v6, file = "data/base_china_v6.xlsx")
+write.xlsx(base_china_v6, file = "data/versiones/base_china_v6.xlsx")
 
 
 
 ##---------------------------------------------------------------------------##
-## 5. Alternativa DH p/Base UN Votes (inc. merge con AIIB, IED y DevFin ####
+## 5. Alternativa DH p/Base UN Votes ####
 ##---------------------------------------------------------------------------##
 
 #Retomamos desde unconv_china, ya que incluye los temas de DDHH
-unconv_china <- read_csv("data/unconv_china.csv")
+unconv_china <- read_csv("data/otras/unconv_china.csv")
 
-#Filtrar votos por Derechos Humanos y exportamos
+#Filtrar votos por Derechos Humanos
 topicsVotes <- data.frame(unique(unconv_china$short))
-unconv_china_hr <- unconv_china %>%
-  filter(str_detect(tolower(short), "human rights")) #Usamos una función str_detect para buscar dentro de los Chr
-write_csv(x = unconv_china_hr, file = "data/bases_hr/unconv_china_hr.csv")
 
-#Ahora sí, volvemos a calcular las medias anuales por país
+unconv_china_hr <- unconv_china %>%
+  filter(str_detect(tolower(descr), "human rights")) #Usamos una función str_detect para buscar dentro de los Chr
+
+write.xlsx(unconv_china_hr, file = "data/otras/unconv_china_hr.xlsx")
+
+# Calculamos nuevamente las medias anuales
 unconv_china_hr_mean <- with(unconv_china_hr, 
                           aggregate(conv_china, list("ccode"=ccode, "year"=year), 
                                     mean))
-write_csv(x = unconv_china_hr_mean, file = "data/bases_hr/unconv_china_hr_mean.csv")
 
-# Retomamos nuevamente desde la base_china_v3 y la volvemos a limpiar
-base_china_v3 <- read_excel("data/versiones/base_china_v3.xlsx")
-refcode <- read_excel("data/otras/refcode.xlsx") # Reutilizamos la base refcode. Ver segmento previo
-base_china_v4 <- full_join(x = base_china_v3, y = refcode, by = "abv")
+write.xlsx(unconv_china_hr_mean, file = "data/otras/unconv_china_hr_mean.xlsx")
 
-base_china_hr<- full_join(x = base_china_v4, y = unconv_china_hr_mean, by = c("ccode", "year"))
-base_china_hr <- select(base_china_hr, -country.y)
-colnames(base_china_hr)[18] <- "unconv_china"
-colnames(base_china_hr)[1] <- "country"
+# Retomamos la base_china_v6
+base_china_v6 <- read_excel("data/versiones/base_china_v6.xlsx")
 
-# Seguimos nuevamente con el merge con IED, AIIB y DEVFIN, como hacíamos previamente
-b_aiib <- read_excel("data/otras/aiib_projects.xlsx")
-b_ied <- read_excel("data/otras/ied_china.xlsx")
-b_devfin <- read_excel("data/otras/devfin_china.xlsx")
+# Merge con los datos de unconv para DDHH y reordenamos
+base_china_merge <- full_join(x = base_china_v6, y = unconv_china_hr_mean, by = c("ccode", "year"))
 
-base_china_aiib <- left_join(base_china_hr, b_aiib, by = c("abv", "year", "ccode", "country"))
-base_china_ied <- left_join(base_china_aiib, b_ied, by = c("country", "year"))
-base_china_devfin <- left_join(base_china_ied, b_devfin, by = c("country", "year", "abv", "ccode"))
-
-base_china_hr2 <- base_china_devfin %>% 
-  mutate (id = c(1:nrow(base_china_devfin))) %>% 
-  select(id, colnames(base_china_devfin))
+base_china_v7 <- base_china_merge %>% 
+  select(-unconv_china, unconv_china) %>% 
+  rename(unconv_china_hr = x) %>% 
+  select(-unconv_china_hr, unconv_china_hr) 
 
 # Exportamos una nueva base segmentada por tema de DDHH
-write.xlsx(base_china_hr2, file = "data/bases_hr/base_china_hr.xlsx")
+write.xlsx(base_china_v7, file = "data/versiones//base_china_v7.xlsx")
 
 
 
+# Voy a tratar de dividir las IED y DevFin por GDP
+base_china_v7 <- read_excel("data/versiones/base_china_v7.xlsx")
 
+colnames(base_china_v7)
+
+base_china_v8 <- base_china_v7 %>% 
+  mutate(ied_gdp = ied_amount / gdp) %>% 
+  mutate(devfin_gdp = devfin_total / gdp)
+
+class(base_china_v8$devfin_gdp)
+
+write.xlsx(base_china_v8, file = "data/versiones//base_china_v8.xlsx")
