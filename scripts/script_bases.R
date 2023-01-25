@@ -207,13 +207,13 @@ b_ied <- read_excel("data/otras/ied_china.xlsx")
 b_devfin <- read_excel("data/otras/devfin_china.xlsx")
 
 ### Merge AIIB ####
-base_china_aiib <- left_join(base_china_v5, b_aiib, by = c("abv", "year", "ccode", "country"))
+base_china_aiib <- left_join(base_china_v5, b_aiib, by = c("abv", "year", "country"))
 
 ### Merge IED ####
 base_china_ied <- left_join(base_china_aiib, b_ied, by = c("country", "year"))
 
 ### Merge DevFin ####
-base_china_devfin <- left_join(base_china_ied, b_devfin, by = c("country", "year", "abv", "ccode"))
+base_china_devfin <- left_join(base_china_ied, b_devfin, by = c("country", "year", "abv"))
 
 ### Creación de id y exportación #### 
 base_china_v6 <- base_china_devfin %>% 
