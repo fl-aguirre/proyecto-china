@@ -5,35 +5,36 @@ library(readxl)
 library(ggrepel)
 
 #Importar la base
-base_china <- read_excel("data/versiones/base_china_v8.xlsx")
+base_china <- read_excel("data/base_china_final.xlsx")
+warnings()
 names(base_china)
 
-#Tabla para ver frecuencias mou_bri
-table(base_china$mou_bri)
+class(base1$unconv_china)
+
+table(base_china$mou_bri) #Tabla para ver frecuencias mou_bri
+
+base_china1 <- base_china %>% 
+  mutate(unconv_china = as.numeric(unconv_china)) %>% 
+  mutate(unconv_china_hr = as.numeric(unconv_china_hr))
+
+class(base_china1$unconv_china)
 
 
-## Comercio ####
+## Filtrado de la base ####
 
-base1 <- base_china %>% 
-  filter(gdp != "na" &
-         year >= 2013 &
-         trade_gdp != "na" &
-         unconv_china != "na" & 
-         income != "na" &
-         income != "High income")
+base1 <- base_china1 %>% 
+  filter(ied_amount != "na")
 
+names(base1)
 unique(base1$income)
 summary(base1)
 
-ggplot(filter(base1, trade_gdp > 0 & trade_gdp < 0.3 & unconv_china > 0), 
-       aes(y = trade_gdp, x = unconv_china)) +
+#Gráfico
+
+ggplot(filter(base1, ied_gdp < 1), 
+       aes(y = ied_gdp, x = partnerships_rpc)) +
   geom_point() +
   geom_smooth(method = "lm")
-# +
-#   geom_text_repel(data = base %>%
-#                     filter(trade_gdp > 0.2 & trade_gdp < 0.6 & unconv_china > 0.75),
-#                     aes(y = trade_gdp, label = country))
-
 
 
 ## IED ####

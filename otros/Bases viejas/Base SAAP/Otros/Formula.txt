@@ -1,0 +1,2 @@
+=SI(F2="Low income";1;(SI(F2="Lower middle income";2;(SI(F2="Upper middle income";3;4)))))
+=SI(D2="East Asia & Pacific";1;(SI(D2="South Asia";2;(SI(D2="Middle East & North Africa";3;(SI(D2="Europe & Central Asia";4;(SI(D2="Sub-Saharan Africa";5;(SI(D2="Latin America & Caribbean";6;(SI(D2="Latin America & Caribbean";6;7)))))))))))))
