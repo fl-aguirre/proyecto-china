@@ -111,12 +111,12 @@ load(file = "data/otras/UNVotes.RData")
 base_china_v3 <- read_excel("data/versiones/base_china_v3.xlsx") #Retoma desde la exportación de la base_v3 en script_bases
 
 ### Segmentación de sesiones y votos de China desde 2010 ####
-unvotes_china2000 <- completeVotes %>% 
-  filter(ccode == 710 , year == 2000) #Vamos con la prueba para 2010
+unvotes_china2010 <- completeVotes %>% 
+  filter(ccode == 710 , year >= 2010) #Vamos con la prueba para 2010
 
 ### Segmentación de base principal desde 2010 ####
-unvotes_total2000 <- completeVotes %>% 
-  filter(ccode != 710, year == 2000) #Idem unvotes_china2010
+unvotes_total2010 <- completeVotes %>% 
+  filter(ccode != 710, year >= 2010) #Idem unvotes_china2010
 
 ### Función un_conv ####
 #Creamos función con  doble iteración por fila de votos China y por fila de votos total
@@ -155,10 +155,10 @@ un_conv <- function(dfgeneral,dfreferencia) {
 
 #Armar lista vacía y ejecutar la función sobre las bases
 listaVotos <- list()
-listaVotos <- un_conv(unvotes_total2001,unvotes_china2001)
+listaVotos <- un_conv(unvotes_total2010,unvotes_china2010)
 
 #Agregar la lista con convergencia a la base (y cambiar el tipo a numerico)
-unconv_china2001 <- unvotes_total2001 %>% 
+unconv_china <- unvotes_total2010 %>% 
   mutate(conv_china = as.numeric(listaVotos))
 
 write_csv(x = unconv_china, file = "data/otras/unconv_china.csv")
