@@ -81,31 +81,9 @@ unconv_china_mean <- with(unconv_china,
 
 colnames(unconv_china_mean)[3] <- "unconv_china"
 
-write.xlsx(x = unconv_china_mean, file = "data/otras/unconv_china_mean.xlsx")
+write.xlsx(x = unconv_china_mean, file = "data/unconv_china_mean.xlsx")
 
-base_final <- left_join(base_china_final_v4, unconv_china_mean, by=c("abv", "year"))
+base_final <- left_join(base_china, unconv_china_mean, by=c("ccode", "year"))
 
-write.xlsx(x = base_final, file = "data/base_china_final_v5.xlsx")
+write.xlsx(x = base_final, file = "data/base_china_final_v6.xlsx")
 
-#Unificar los nombres de los países
-
-na <- is.na(unconv_china$Countryname)
-
-summary(na)
-
-abv.function <-  function(data){
-  nombre.pais <- list()
-  for (i in 1:nrow(data)) {
-    if(is.na(data[i,6])){
-      nombre.pais <- c(nombre.pais,data[i,5])
-    }else{
-      nombre.pais <- c(nombre.pais,data[i,6])
-    }
-  }
-  return(nombre.pais)
-}
-
-paises <- abv.function(unconv_china)
-
-unconv_china2 <- unconv_china %>% 
-  mutate(Countryname2 <- paises)
