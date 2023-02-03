@@ -87,3 +87,22 @@ base_final <- left_join(base_china, unconv_china_mean, by=c("ccode", "year"))
 
 write.xlsx(x = base_final, file = "data/base_china_final_v6.xlsx")
 
+
+
+### VARIANTE DERECHOS HUMANOS
+
+unconv_china_HR <- read_excel("data/otras/unconv_china_HR.xlsx")
+base_china <- read_excel("data/base_china_final_v6.xlsx")
+
+unconv_china_HR_mean <- with(unconv_china_HR, 
+                          aggregate(conv_china, list("ccode"=ccode, "year"=year), 
+                                    mean))
+
+colnames(unconv_china_HR_mean)[3] <- "unconv_china_HR"
+
+write.xlsx(x = unconv_china_HR_mean, file = "data/unconv_china_HR_mean.xlsx")
+
+base_final <- left_join(base_china, unconv_china_HR_mean, by=c("ccode", "year"))
+
+write.xlsx(x = base_final, file = "data/base_china_final_v6.5.xlsx")
+
